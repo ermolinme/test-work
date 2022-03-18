@@ -3,8 +3,8 @@
 @section('content')
 @include('admin.modals.create-feedback')
 @include('admin.modals.edit-feedback')
-<div class="container">
-    <div class="d-flex justify-content-between mb-4 pr-4 pb-2 border-bottom">
+<div class="container main-container">
+    <div class="d-flex justify-content-between mb-2 pr-4 pb-2 border-bottom">
         <h3>Заявки ({{ $feedbacks->total() }})</h3>
         <button class="btn btn-primary" 
             data-bs-toggle="modal" 
@@ -13,49 +13,51 @@
             Создать заявку
         </button>
     </div>
-    @forelse($feedbacks as $feedback)
-        <div class="row mb-2">
-            <div class="col-lg-3">
-                {{ $feedback->name }}
-            </div>
-            <div class="col-lg-4">
-                <div>
-                    {{ $feedback->email }}
+    <div class="p-2">
+        @forelse($feedbacks as $feedback)
+            <div class="row mb-2 border-bottom py-1">
+                <div class="col-lg-3">
+                    {{ $feedback->name }}
                 </div>
-                {{ $feedback->phone }}
+                <div class="col-lg-4">
+                    <div>
+                        {{ $feedback->email }}
+                    </div>
+                    {{ $feedback->phone }}
+                </div>
+                <div class="col-lg-3">
+                    {{ $feedback->created_at->format('d.m.Y, H:i') }}
+                </div>
+                <div class="col-lg-2 d-flex gap-1 align-items-start justify-content-end">
+                    <button 
+                        class="btn btn-success edit-btn"
+                        data-email="{{ $feedback->email }}"
+                        data-phone="{{ $feedback->phone }}"
+                        data-name="{{ $feedback->name }}"
+                        data-id="{{ $feedback->id }}"
+                        data-action="{{ route('admin.feedback.update', $feedback) }}"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#edit-feedback-modal"
+                    >
+                        Изменить
+                    </button>
+                    <form action="{{ route('admin.feedback.delete', $feedback) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </div>
             </div>
-            <div class="col-lg-3">
-                {{ $feedback->created_at->format('d.m.Y, H:i') }}
+        @empty
+            <div class="row">
+                <div class="col-lg-12 p-4 text-center muted">
+                    Заявок нет
+                </div>
             </div>
-            <div class="col-lg-2 d-flex gap-1 align-items-start justify-content-end">
-                <button 
-                    class="btn btn-success edit-btn"
-                    data-email="{{ $feedback->email }}"
-                    data-phone="{{ $feedback->phone }}"
-                    data-name="{{ $feedback->name }}"
-                    data-id="{{ $feedback->id }}"
-                    data-action="{{ route('admin.feedback.update', $feedback) }}"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#edit-feedback-modal"
-                >
-                    Изменить
-                </button>
-                <form action="{{ route('admin.feedback.delete', $feedback) }}" method="post">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Удалить</button>
-                </form>
-            </div>
+        @endforelse
+        <div class="d-flex justify-content-center py-2">
+            {{ $feedbacks->links() }}
         </div>
-    @empty
-        <div class="row">
-            <div class="col-lg-12 p-4 text-center muted">
-                Заявок нет
-            </div>
-        </div>
-    @endforelse
-    <div class="d-flex justify-content-center p-4">
-        {{ $feedbacks->links() }}
     </div>
 </div>
 @endsection

@@ -24,7 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $feedbacks = Feedback::latest()->paginate(10);
+        $feedbacks = Feedback::latest()->paginate(5);
 
         return view('home', compact('feedbacks'));
     }
